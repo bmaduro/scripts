@@ -2,12 +2,12 @@
 
 infisical_install_and_configure() {
   curl -1sLf \
-    'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' |
+    'https://artifacts-cli.infisical.com/setup.deb.sh' |
     bash
 
   apt-get update
 
-  if [ -z $1]; then 
+  if [ -z "$1" ]; then 
     apt-get install infisical
   else 
     apt-get install infisical=$1
@@ -24,12 +24,16 @@ infisical_install_and_configure() {
 }
 
 infisical_apk_install_and_configure() {
-  curl -1sLf \
-    'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | distro=alpine bash
+  # Cloudsmith stopped serving Infisical downloads on 2026-09-16; the
+  # repository moved to Infisical's own artifact host (version-agnostic,
+  # so no distro/version pin is needed anymore). The setup script needs
+  # wget, which Alpine images may not have yet.
+  apk add --no-cache wget
+  wget -qO- 'https://artifacts-cli.infisical.com/setup.apk.sh' | sh
 
   apk update
 
-  if [ -z $1]; then 
+  if [ -z "$1" ]; then 
     apk add infisical
   else 
     apk add infisical=$1
